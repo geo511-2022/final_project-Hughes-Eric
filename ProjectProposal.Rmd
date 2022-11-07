@@ -19,7 +19,7 @@ This project aims to look at Buffalo resident's proximity to supermarkets by the
 
 ```{r}
 library(png)
-img <- readPNG("C:/Users/17166/OneDrive - University at Buffalo/Desktop/Fall Semester 2022/GEO 511/Final Project/Example_1.png")
+img <- readPNG("C:/Users/17166/OneDrive - University at Buffalo/Desktop/Fall Semester 2022/GEO 511/case_studies-Hughes-Eric/Final_Project/Example_1.png")
 grid::grid.raster(img)
 
 ```
