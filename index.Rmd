@@ -54,43 +54,6 @@ library(dodgr)
 library(leaflet)
 ```
 
-
-Here's my first code chunk.
-```{r}
-1+2
-```
-
-Load any required packages in a code chunk (you may need to install some packages):
-
-```{r, message=F, warning=F}
-library(tidyverse)
-library(leaflet)
-library(kableExtra)
-knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling
-```
-
-## Download and clean all required data
-```{r}
-n=20
-data=data.frame(x=runif(n,-180,180),
-                y=runif(n,-60,60),
-                size = runif(n, 5, 20),
-                category = factor(
-                  sample(letters[1:5], n, replace = TRUE)
-                  ),
-                value = rnorm(n))
-```
-
-```{r, results='asis'}
-data %>% 
-  slice(1:10) %>% #show only 1:n rows
-  kable(digits=2,align="c")%>% #make table and round to two digits
-  kable_styling(bootstrap_options = 
-                  c("striped", "hover", "condensed", "responsive")) #apply other formatting
-```
-
-Add any additional processing steps here.
-
 # Results
 
 [~200 words]
