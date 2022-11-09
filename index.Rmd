@@ -13,27 +13,46 @@ This project aims to look at Buffalo resident's proximity to supermarkets by the
 
 # Materials and methods
 
-[~ 200 words]
+- US Census Bureau will provide census tract data of median household income, as well as demographic data, for Buffalo
 
-Narrative: Clear narrative description of the data sources and methods. Includes data from at least two sources that were integrated / merged in R.
+- Open Data Buffalo for Neighborhood Boundary Shapefile
 
-Code: The code associated with the project is well organized and easy to follow. Demonstrates mastery of R graphics and functions.
+- ESRI Business Analyst will provide supermarket data
 
-Data: The underlying data are publicly accessible via the web and downloaded/accessed within the Rmd script. If you want to use your own data, you must make it available on a website (e.g. Figshare) so that others are able to re-run your code.
+# Proposed methods
 
-You can do bullets like this:
 
-* The first most important thing
-* The second most important thing
-* The third most important thing
+- Data cleaning and processing
 
-You can do numbers like this:
+- Plot data for median household income
 
-1. The first most important thing
-2. The second most important thing
-3. The third most important thing
+- Plot supermarket data
 
-See [http://rmarkdown.rstudio.com/](http://rmarkdown.rstudio.com/) for all the amazing things you can do.
+- Clip data to Buffalo boundary
+
+- Use the dodgr package to determine travel distances 
+
+- Analyze and plot the data for each mode of transport 
+
+
+# Packages
+```
+library(tidyverse)
+library(ggplot2)
+library(ggmap)
+library(maptools)
+library(ggthemes)
+library(plyr)
+library(dplyr)
+library(grid)
+library(gridExtra)
+library(scales)
+library(sp)
+library(sf)
+library(RColorBrewer)
+library(dodgr)
+library(leaflet)
+```
 
 
 Here's my first code chunk.
