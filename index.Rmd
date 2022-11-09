@@ -6,9 +6,10 @@ subtitle: Subtitle here if desired
 
 # Introduction
 
-[~ 200 words]
+Access to healthy food is not equal across all regions. Many factors influence food access such as vehicle access, proximity of quality grocery retailers, and income. The most basic measure of food access is proximity to supermarkets. Supermarkets have the resources to carry a wide range of produce and have affordable prices which makes their presence a good measure of local food security.
 
-Clearly stated background and questions / hypotheses / problems being addressed. Sets up the analysis in an interesting and compelling way.
+This project aims to look at Buffalo resident's proximity to supermarkets by their median income. To do this, Buffalo residents will be grouped together in five income brackets and the average distance to a supermarket for each bracket will be calculated for various modes of transportation. Demographic information about each bracket will also be examined to better explain the food disparity phenomenon.  
+
 
 # Materials and methods
 
