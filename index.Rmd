@@ -1,6 +1,6 @@
 ---
 title: "My Final Project Template"
-author: Your name here
+author: Eric Hughes
 subtitle: Subtitle here if desired
 ---
 
