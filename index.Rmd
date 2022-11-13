@@ -18,7 +18,7 @@ This project aims to look at Buffalo resident's proximity to supermarkets by the
 
 - Open Data Buffalo for Neighborhood Boundary Shapefile
 
-- ESRI Business Analyst will provide supermarket data
+- ESRI Business Analyst will provide all supermarket data
 
 ## Packages
 ```{r, message=F, warning=F}
