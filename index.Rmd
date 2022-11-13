@@ -34,7 +34,7 @@ library(sp)
 ```{r, message=F, warning=F}
 # Import and sort median income data
 
-income_csv <- read.csv(file = "docs/median_income_data_2020.csv",
+income_csv <- read.csv(file = "median_income_data_2020.csv",
                               skip = 2, header = F)
 income_data <- income_csv[c(2,3,324)]
 colnames(income_data) <- c("geoid", "census.tract", "median.household.income")
