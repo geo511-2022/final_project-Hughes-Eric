@@ -12,45 +12,53 @@ This project aims to look at Buffalo resident's proximity to supermarkets by the
 
 # Materials and methods
 
+## Data sources
+
 - US Census Bureau will provide census tract data of median household income, as well as demographic data, for Buffalo
 
 - Open Data Buffalo for Neighborhood Boundary Shapefile
 
 - ESRI Business Analyst will provide supermarket data
 
-# Proposed methods
-
-
-- Data cleaning and processing
-
-- Plot data for median household income
-
-- Plot supermarket data
-
-- Clip data to Buffalo boundary
-
-- Use the dodgr package to determine travel distances 
-
-- Analyze and plot the data for each mode of transport 
-
-
-# Packages
-```
+## Packages
+```{r, message=F, warning=F}
+library(sf)
 library(tidyverse)
 library(ggplot2)
-library(ggmap)
-library(maptools)
-library(ggthemes)
-library(plyr)
-library(dplyr)
-library(grid)
-library(gridExtra)
-library(scales)
 library(sp)
-library(sf)
-library(RColorBrewer)
-library(dodgr)
-library(leaflet)
+```
+
+
+## Data cleaning
+
+```{r, message=F, warning=F}
+# Import and sort median income data
+
+income_csv <- read.csv(file = "docs/median_income_data_2020.csv",
+                              skip = 2, header = F)
+income_data <- income_csv[c(2,3,324)]
+colnames(income_data) <- c("geoid", "census.tract", "median.household.income")
+income_data$geoid = as.character(income_data$geoid)
+
+# Import census tract data and join it with median income data
+
+census_tracts <- st_read("buffalo_census_tracts") 
+
+income_shape <- census_tracts %>% left_join(income_data, by = c("GEOID" = "geoid"))
+income_shape$INTPTLAT = as.numeric(income_shape$INTPTLAT)
+income_shape$INTPTLON = as.numeric(income_shape$INTPTLON)
+income_shape$median.household.income = as.integer(income_shape$median.household.income)
+
+income_proj <- income_shape %>% 
+  st_transform(4326) 
+
+# Create Buffalo border
+
+buffalo_border <- st_read("buffalo_boundary") %>%
+  st_transform(4326)
+buffalo_sp <- as_Spatial(st_transform(buffalo_border, 4326))
+buffalo_bbox <- buffalo_sp@bbox
+
 ```
 
 # Results
@@ -60,6 +68,27 @@ library(leaflet)
 Tables and figures (maps and other graphics) are carefully planned to convey the results of your analysis. Intense exploration and evidence of many trials and failures. The author looked at the data in many different ways before coming to the final presentation of the data.
 
 Show tables, plots, etc. and describe them.
+
+```{r, message=F, warning=F}
+income_map <- ggplot(income_proj) + 
+  geom_sf(data = income_proj, aes(x = INTPTLON, y = INTPTLAT,  fill = median.household.income), 
+          inherit.aes = F) +
+  scale_fill_gradient(low = "yellow", high = "red") +
+  geom_sf(fill = "transparent", color = "gray20", size = 1, 
+          data = buffalo_border, inherit.aes = F)+
+  coord_sf(ylim=buffalo_bbox[c(2,4)], xlim=buffalo_bbox[c(1,3)]) +
+  labs(title="Median Household Income in Buffalo, NY (2020)",
+       subtitle="Census Tract Scale",
+       caption="Data from US Census Bureau",
+       x = "Longitude",
+       y = "Latitude") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.9, hjust=1))+
+  guides(fill=guide_legend(title="Median Household Income ($)")) 
+
+income_map
+  
+```
+  
 
 # Conclusions
 
