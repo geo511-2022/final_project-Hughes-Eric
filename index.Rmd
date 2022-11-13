@@ -88,14 +88,14 @@ income_map <- ggplot(income_proj) +
 income_map
   
 ```
+
+More to come!
   
 
 # Conclusions
 
 [~200 words]
 
+Coming soon!!
+
 Clear summary adequately describing the results and putting them in context. Discussion of further questions and ways to continue investigation.
-
-# References
-
-All sources are cited in a consistent manner
