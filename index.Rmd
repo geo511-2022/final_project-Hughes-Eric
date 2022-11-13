@@ -36,7 +36,7 @@ library(sp)
 
 income_csv <- read.csv(file = "median_income_data_2020.csv",
                               skip = 2, header = F)
-income_data <- income_csv[c(2,3,324)]
+income_data <- income_csv[c(1,2,323)]
 colnames(income_data) <- c("geoid", "census.tract", "median.household.income")
 income_data$geoid = as.character(income_data$geoid)
 
