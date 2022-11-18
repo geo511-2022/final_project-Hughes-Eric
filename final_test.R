@@ -6,6 +6,7 @@ library(ggmap)
 library(dodgr)
 library(osmdata, quietly=T)
 library(classInt)
+library(knitr)
 
 ##Create Variable with all census tracts within Buffalo boundary that contains median household income data
 
@@ -15,7 +16,7 @@ income_data <- income_csv[c(1,2,323)]
 colnames(income_data) <- c("geoid", "census.tract", "median.household.income")
 income_data$geoid = as.character(income_data$geoid)
 
-vehicle_access_csv <- read.csv(file = "docs/vehicle_access.csv")
+vehicle_access_csv <- read.csv(file = "vehicle_access.csv")
 vehicle_access_data <- vehicle_access_csv[c(1,2,6)]
 colnames(vehicle_access_data) <- c("geoid","census.tract","prop.wo.va")
 
@@ -230,7 +231,14 @@ ave_dist_less_than_40k <- mean(less_than_40k$dist) #1926.935
 ave_dist_less_than_60k <- mean(less_than_60k$dist) #1830.889
 ave_dist_greater_than_60k <- mean(greater_than_or_equal_60k$dist) #1648.723
 
+ave_dist_income <- c(ave_dist_less_than_20k,ave_dist_less_than_40k,ave_dist_less_than_60k,ave_dist_greater_than_60k)
+
+knitr::kable(head(arrange(data[,1:2], desc(year))), 
+             format = "simple", col.names = c("Year", "Mean"), caption = "<span style='font-size:20px'>Top 5 CO2 Levels")
+
 ave_dist_less_than_0.2 <- mean(less_than_0.2$dist) #1661.945
 ave_dist_less_than_0.4 <- mean(less_than_0.4$dist) #1844.538
 ave_dist_less_than_0.6 <- mean(less_than_0.6$dist) #1957.577
 ave_dist_greater_than_0.6 <- mean(greater_than_0.6$dist) #2438.269
+
+

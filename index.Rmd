@@ -43,7 +43,7 @@ income_data <- income_csv[c(1,2,323)]
 colnames(income_data) <- c("geoid", "census.tract", "median.household.income")
 income_data$geoid = as.character(income_data$geoid)
 
-vehicle_access_csv <- read.csv(file = "docs/vehicle_access.csv")
+vehicle_access_csv <- read.csv(file = "vehicle_access.csv")
 vehicle_access_data <- vehicle_access_csv[c(1,2,6)]
 colnames(vehicle_access_data) <- c("geoid","census.tract","prop.wo.va")
 
