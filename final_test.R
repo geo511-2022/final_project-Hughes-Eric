@@ -7,6 +7,7 @@ library(dodgr)
 library(osmdata, quietly=T)
 library(classInt)
 library(knitr)
+library(geodist)
 
 ##Create Variable with all census tracts within Buffalo boundary that contains median household income data
 
