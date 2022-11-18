@@ -3,7 +3,7 @@ title: "Supermarket presence by median household income and vehicle access in Bu
 author: Eric Hughes
 ---
 
-# Introduction
+# Introduction 
 
 Access to healthy food is not equal across all regions. Many factors influence food access such as vehicle access, proximity of quality grocery retailers, and income. The most basic measure of food access is proximity to supermarkets. Supermarkets have the resources to carry a wide range of produce and have affordable prices which makes their presence a good measure of local food security. The two main barriers to food are income level and access to a personal vehicle.
 
