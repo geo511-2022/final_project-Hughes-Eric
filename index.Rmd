@@ -1,6 +1,6 @@
 ---
 title: "Supermarket presence by median household income and vehicle access in Buffalo, NY"
-author: Eric Hughes
+author: Eric Hughes 
 ---
 
 # Introduction 
