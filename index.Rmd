@@ -36,7 +36,7 @@ library(knitr)
 
 ## Data cleaning
 
-```{r, message=F, warning=F}
+```{r, message=F, warning=F, eval = FALSE}
 #Create Variable with all census tracts within Buffalo boundary that contains median household income data
 
 income_csv <- read.csv(file = "median_income_data_2020.csv",
