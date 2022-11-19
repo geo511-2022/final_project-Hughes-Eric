@@ -239,7 +239,7 @@ vehicle_supermarket
 ```
 
 More to come!
-  
+   
 
 # Conclusions
 
