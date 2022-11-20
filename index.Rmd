@@ -1,5 +1,5 @@
 ---
-title: "Supermarket presence by median household income and vehicle access in Buffalo, NY"
+title: "Can median household income and access to a vehicle be predictive of supermarket presence in Buffalo, NY?"
 author: Eric Hughes
 ---
 
@@ -31,6 +31,7 @@ library(osmdata, quietly=T)
 library(classInt)
 library(knitr)
 library(geodist)
+library(kableExtra)
 ```
 
 
@@ -196,7 +197,7 @@ ave_dist_greater_than_0.6 <- mean(greater_than_0.6$dist) #2438.269
 
 The plot for median house income shows where supermarkets are in relation to each census tract and each census tract's income bracket. 
 
-```{r, message=F, warning=F, fig.cap="Plot showing median household income by census tract and where supermarkets are located"}
+```{r, message=F, warning=F}
 
 income_supermarket <- ggmap(basemap) +
   geom_sf(data = income_proj, aes(x = INTPTLON, y = INTPTLAT,  fill = median.household.income), 
@@ -211,13 +212,13 @@ income_supermarket <- ggmap(basemap) +
        x = "Longitude",
        y = "Latitude") +
   theme(legend.direction = "vertical", axis.text.x = element_text(angle = 45, vjust = 0.9, hjust=1))+
-  guides(fill=guide_legend(title="Median Household Income ($)"))
+  guides(fill=guide_legend(title="Median Household Income ($)", order = 1)) 
 income_supermarket  
 
 ```
 
 The plot for vehicle access data shows where supermarkets are in relation to each census tract and each census tract's vehicle access bracket. 
-```{r, message=F, warning=F, fig.cap="Plot showing vehicle access proportions by census tract and where supermarkets are located"}
+```{r, message=F, warning=F}
 
 vehicle_supermarket <- ggmap(basemap) +
   geom_sf(data = vehicle_proj, aes(x = INTPTLON, y = INTPTLAT,  fill = prop.wo.va), 
@@ -237,52 +238,54 @@ without access to a vehicle"))
 vehicle_supermarket
 
 ```
-##Summary tables
+
+## Summary tables
 
 The median household income data table shows that there was not an obvious pattern of supermarket distribution based upon median household income. The highest median income bracket did on average have the shortest distance to a supermarket but the other three brackets had similar distances with the bracket for "Between 20K and 40K" with the furthest distance.
-```{r, message=F, warning=F,fig.cap="Summary table for median household income data and proximity to the nearest supermarket"}
+```{r, message=F, warning=F}
 
 income_bracket <- data.frame(matrix(ncol = 1, nrow = 4))
-colnames(income_bracket) = "Income Bracket"
+colnames(income_bracket) = "Income bracket ($)"
 income_bracket[1,1] = "20k or less"
 income_bracket[2,1] = "Between 20K and 40k"
 income_bracket[3,1] = "Between 40k and 60k"
 income_bracket[4,1] = "More than 60k"
 
 income_dists <- data.frame(matrix(ncol = 1, nrow = 4))
-colnames(income_dists) = "Distance in meters"
-income_dists[1,1] = ave_dist_less_than_20k
-income_dists[2,1] = ave_dist_less_than_40k
-income_dists[3,1] = ave_dist_less_than_60k
-income_dists[4,1] = ave_dist_greater_than_60k
+colnames(income_dists) = "Average distance to nearest supermarket (miles)"
+income_dists[1,1] = round(ave_dist_less_than_20k / 1609.344, digits = 2)
+income_dists[2,1] = round(ave_dist_less_than_40k / 1609.344, digits = 2)
+income_dists[3,1] = round(ave_dist_less_than_60k / 1609.344, digits = 2)
+income_dists[4,1] = round(ave_dist_greater_than_60k / 1609.344, digits = 2)
 
 income_table_combine <- cbind(income_bracket,income_dists)
 
-income_table <- kableExtra::kable(income_table_combine)
+income_table <- kableExtra::kable(income_table_combine) 
 
-income_table
+kable_styling(income_table, "striped", position = "left", font_size = 12, html_font = "arial")
+
 ```
-```{r, message=F, warning=F,fig.cap="Summary table for vehicle access data and proximity to the nearest supermarket"}
+```{r, message=F, warning=F}
 
 vehicle_bracket <- data.frame(matrix(ncol = 1, nrow = 4))
-colnames(vehicle_bracket) = "Vehicle Bracket"
+colnames(vehicle_bracket) = "Vehicle access bracket"
 vehicle_bracket[1,1] = "Less than 20% of households don't have access to a vehicle"
 vehicle_bracket[2,1] = "Between 20% and 40% of households don't have access to a vehicle"
 vehicle_bracket[3,1] = "Between 40% and 60% of households don't have access to a vehicle"
 vehicle_bracket[4,1] = "More than 60% of households don't have access to a vehicle"
 
 vehicle_dists <- data.frame(matrix(ncol = 1, nrow = 4))
-colnames(vehicle_dists) = "Distance in meters"
-vehicle_dists[1,1] = ave_dist_less_than_0.2
-vehicle_dists[2,1] = ave_dist_less_than_0.4
-vehicle_dists[3,1] = ave_dist_less_than_0.6
-vehicle_dists[4,1] = ave_dist_greater_than_0.6
+colnames(vehicle_dists) = "Average distance to nearest supermarket (miles)"
+vehicle_dists[1,1] = round(ave_dist_less_than_0.2 / 1609.344, digits = 2)
+vehicle_dists[2,1] = round(ave_dist_less_than_0.4 / 1609.344, digits = 2)
+vehicle_dists[3,1] = round(ave_dist_less_than_0.6 / 1609.344, digits = 2)
+vehicle_dists[4,1] = round(ave_dist_greater_than_0.6 / 1609.344, digits = 2)
 
 vehicle_table_combine <- cbind(vehicle_bracket,vehicle_dists)
 
 vehicle_table <- kableExtra::kable(vehicle_table_combine)
 
-vehicle_table
+kable_styling(vehicle_table, "striped", position = "left", font_size = 12, html_font = "arial")
 ```
   
 
