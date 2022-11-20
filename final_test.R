@@ -232,14 +232,51 @@ ave_dist_less_than_40k <- mean(less_than_40k$dist) #1926.935
 ave_dist_less_than_60k <- mean(less_than_60k$dist) #1830.889
 ave_dist_greater_than_60k <- mean(greater_than_or_equal_60k$dist) #1648.723
 
-ave_dist_income <- c(ave_dist_less_than_20k,ave_dist_less_than_40k,ave_dist_less_than_60k,ave_dist_greater_than_60k)
-
-knitr::kable(head(arrange(data[,1:2], desc(year))), 
-             format = "simple", col.names = c("Year", "Mean"), caption = "<span style='font-size:20px'>Top 5 CO2 Levels")
-
 ave_dist_less_than_0.2 <- mean(less_than_0.2$dist) #1661.945
 ave_dist_less_than_0.4 <- mean(less_than_0.4$dist) #1844.538
 ave_dist_less_than_0.6 <- mean(less_than_0.6$dist) #1957.577
 ave_dist_greater_than_0.6 <- mean(greater_than_0.6$dist) #2438.269
+
+##Create summary tables
+
+income_bracket <- data.frame(matrix(ncol = 1, nrow = 4))
+colnames(income_bracket) = "Income Bracket"
+income_bracket[1,1] = "20k or less"
+income_bracket[2,1] = "Between 20K and 40k"
+income_bracket[3,1] = "Between 40k and 60k"
+income_bracket[4,1] = "More than 60k"
+
+income_dists <- data.frame(matrix(ncol = 1, nrow = 4))
+colnames(income_dists) = "Distance in meters"
+income_dists[1,1] = ave_dist_less_than_20k
+income_dists[2,1] = ave_dist_less_than_40k
+income_dists[3,1] = ave_dist_less_than_60k
+income_dists[4,1] = ave_dist_greater_than_60k
+
+income_table_combine <- cbind(income_bracket,income_dists)
+
+income_table <- kableExtra::kable(income_table_combine)
+
+income_table
+
+vehicle_bracket <- data.frame(matrix(ncol = 1, nrow = 4))
+colnames(vehicle_bracket) = "Vehicle Bracket"
+vehicle_bracket[1,1] = "Less than 20% of households don't have access to a vehicle"
+vehicle_bracket[2,1] = "Between 20% and 40% of households don't have access to a vehicle"
+vehicle_bracket[3,1] = "Between 40% and 60% of households don't have access to a vehicle"
+vehicle_bracket[4,1] = "More than 60% of households don't have access to a vehicle"
+
+vehicle_dists <- data.frame(matrix(ncol = 1, nrow = 4))
+colnames(vehicle_dists) = "Distance in meters"
+vehicle_dists[1,1] = ave_dist_less_than_0.2
+vehicle_dists[2,1] = ave_dist_less_than_0.4
+vehicle_dists[3,1] = ave_dist_less_than_0.6
+vehicle_dists[4,1] = ave_dist_greater_than_0.6
+
+vehicle_table_combine <- cbind(vehicle_bracket,vehicle_dists)
+
+vehicle_table <- kableExtra::kable(vehicle_table_combine)
+
+vehicle_table
 
 

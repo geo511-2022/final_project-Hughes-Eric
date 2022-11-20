@@ -5,9 +5,9 @@ author: Eric Hughes
 
 # Introduction 
 
-Access to healthy food is not equal across all regions. Many factors influence food access such as vehicle access, proximity of quality grocery retailers, and income. The most basic measure of food access is proximity to supermarkets. Supermarkets have the resources to carry a wide range of produce and have affordable prices which makes their presence a good measure of local food security. The two main barriers to food are income level and access to a personal vehicle.
+Access to healthy food is not equal across all regions. Many factors influence food access such as income (Walker et al., 2010), vehicle access (Crowe et al., 2018), and proximity to quality grocery retailers (Moore & Diez Roux, 2006). The most basic measure of food access is proximity to supermarkets because supermarkets have the resources to carry a wide range of produce and have affordable prices (Moore & Diez Roux, 2006; Sallis et al., 1986), making their presence a good measure of local food security. Using the Moore & Diez (2006) definition of a supermarket, only grocery stores with 50 or more employees are considered a supermarket.
 
-This project aims to look at Buffalo resident's proximity to supermarkets based off their median household income and access to a vehicle. To do this, two analysis will be run. For the first, Buffalo residents will be grouped into four different income brackets based on their median household income per census tract. For the second, Buffalo residents will be grouped into brackets based on proportions of households within each census tract without access to a personal vehicle. Then, the distance to the nearest supermarket for each census tract centroid will be calculated and. Each census tract will be joined to the median household income and vehicle access datasets and averages will be calculated for each bracket. Results will be analyzed and discussed in the Results and Conclusions sections. 
+This project aims to look at Buffalo resident's proximity to supermarkets based off their median household income and access to a vehicle. To do this, two analysis will be run. For the first, Buffalo residents will be grouped into four different income brackets based on their median household income per census tract. For the second, Buffalo residents will be grouped into four brackets based on proportions of households within each census tract without access to a personal vehicle. Then, the distance to the nearest supermarket for each census tract centroid will be calculated. Each census tract will be joined to the median household income and vehicle access data sets and averages will be calculated for each bracket. Results will be analyzed and discussed in the Results and Conclusions sections. 
 
 # Materials and methods
 
@@ -29,8 +29,8 @@ library(ggmap)
 library(dodgr)
 library(osmdata, quietly=T)
 library(classInt)
-library(geodist)
 library(knitr)
+library(geodist)
 ```
 
 
@@ -192,14 +192,11 @@ ave_dist_greater_than_0.6 <- mean(greater_than_0.6$dist) #2438.269
 
 # Results
 
-[~200 words]
+## Plots for median household income and vehicle access
 
-Tables and figures (maps and other graphics) are carefully planned to convey the results of your analysis. Intense exploration and evidence of many trials and failures. The author looked at the data in many different ways before coming to the final presentation of the data.
+The plot for median house income shows where supermarkets are in relation to each census tract and each census tract's income bracket. 
 
-Show tables, plots, etc. and describe them.
-
-```{r, message=F, warning=F}
-#Plot median income map with supermarkets
+```{r, message=F, warning=F, fig.cap="Plot showing median household income by census tract and where supermarkets are located"}
 
 income_supermarket <- ggmap(basemap) +
   geom_sf(data = income_proj, aes(x = INTPTLON, y = INTPTLAT,  fill = median.household.income), 
@@ -217,7 +214,10 @@ income_supermarket <- ggmap(basemap) +
   guides(fill=guide_legend(title="Median Household Income ($)"))
 income_supermarket  
 
-#Plot vehicle access data map with supermarkets
+```
+
+The plot for vehicle access data shows where supermarkets are in relation to each census tract and each census tract's vehicle access bracket. 
+```{r, message=F, warning=F, fig.cap="Plot showing vehicle access proportions by census tract and where supermarkets are located"}
 
 vehicle_supermarket <- ggmap(basemap) +
   geom_sf(data = vehicle_proj, aes(x = INTPTLON, y = INTPTLAT,  fill = prop.wo.va), 
@@ -235,16 +235,69 @@ vehicle_supermarket <- ggmap(basemap) +
   guides(fill=guide_legend(title="Proportion of households 
 without access to a vehicle")) 
 vehicle_supermarket
-  
-```
 
-More to come!
+```
+##Summary tables
+
+The median household income data table shows that there was not an obvious pattern of supermarket distribution based upon median household income. The highest median income bracket did on average have the shortest distance to a supermarket but the other three brackets had similar distances with the bracket for "Between 20K and 40K" with the furthest distance.
+```{r, message=F, warning=F,fig.cap="Summary table for median household income data and proximity to the nearest supermarket"}
+
+income_bracket <- data.frame(matrix(ncol = 1, nrow = 4))
+colnames(income_bracket) = "Income Bracket"
+income_bracket[1,1] = "20k or less"
+income_bracket[2,1] = "Between 20K and 40k"
+income_bracket[3,1] = "Between 40k and 60k"
+income_bracket[4,1] = "More than 60k"
+
+income_dists <- data.frame(matrix(ncol = 1, nrow = 4))
+colnames(income_dists) = "Distance in meters"
+income_dists[1,1] = ave_dist_less_than_20k
+income_dists[2,1] = ave_dist_less_than_40k
+income_dists[3,1] = ave_dist_less_than_60k
+income_dists[4,1] = ave_dist_greater_than_60k
+
+income_table_combine <- cbind(income_bracket,income_dists)
+
+income_table <- kableExtra::kable(income_table_combine)
+
+income_table
+```
+```{r, message=F, warning=F,fig.cap="Summary table for vehicle access data and proximity to the nearest supermarket"}
+
+vehicle_bracket <- data.frame(matrix(ncol = 1, nrow = 4))
+colnames(vehicle_bracket) = "Vehicle Bracket"
+vehicle_bracket[1,1] = "Less than 20% of households don't have access to a vehicle"
+vehicle_bracket[2,1] = "Between 20% and 40% of households don't have access to a vehicle"
+vehicle_bracket[3,1] = "Between 40% and 60% of households don't have access to a vehicle"
+vehicle_bracket[4,1] = "More than 60% of households don't have access to a vehicle"
+
+vehicle_dists <- data.frame(matrix(ncol = 1, nrow = 4))
+colnames(vehicle_dists) = "Distance in meters"
+vehicle_dists[1,1] = ave_dist_less_than_0.2
+vehicle_dists[2,1] = ave_dist_less_than_0.4
+vehicle_dists[3,1] = ave_dist_less_than_0.6
+vehicle_dists[4,1] = ave_dist_greater_than_0.6
+
+vehicle_table_combine <- cbind(vehicle_bracket,vehicle_dists)
+
+vehicle_table <- kableExtra::kable(vehicle_table_combine)
+
+vehicle_table
+```
   
 
 # Conclusions
 
-[~200 words]
+Results for the median household income data was a bit surprising. Given that supermarkets tend to favor more affluent neighborhoods, expectations were that as each income bracket increased, the distance would decrease. While the highest earners had to travel the least distance, the other three brackets did not show a linear progression of decreasing distances as income increased. However, the vehicle access data yielded expected results. As the proportion of households access to vehicles decreased, the average distance to supermarkets increased. This is expected because people without access to a vehicle typically come from vulnerable communities which supermarkets are less inclined to enter. 
 
-Coming soon!!
+Further research could be done by examining demographic variables such as race and education. By looking into these variables further insights could be gained to further explain the distribution of supermarkets in Buffalo, NY.
 
-Clear summary adequately describing the results and putting them in context. Discussion of further questions and ways to continue investigation.
+# References
+
+- Crowe, J., Lacy, C., & Columbus, Y. (2018). Barriers to food security and community stress in an urban food desert. Urban Science, 2(2), 46. 
+
+- Moore, L. V., & Diez Roux, A. V. (2006). Associations of neighborhood characteristics with the location and type of food stores. American journal of public health, 96(2), 325-331. 
+
+- Sallis, J. F., Nader, P. R., Rupp, J. W., Atkins, C. J., & Wilson, W. C. (1986). San Diego surveyed for heart-healthy foods and exercise facilities. Public health reports (Washington, DC: 1974), 101(2), 216-219. 
+
+- Walker, R. E., Keane, C. R., & Burke, J. G. (2010). Disparities and access to healthy food in the United States: A review of food deserts literature. Health & place, 16(5), 876-884. 
