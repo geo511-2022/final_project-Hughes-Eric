@@ -134,7 +134,7 @@ to_x <- bf_supermarkets$xlon
 to_y <- bf_supermarkets$ylat
 d <- dodgr_dists(graph = graph, from = cbind (from_x, from_y), to = cbind (to_x, to_y))
 df <- apply(d, 1, FUN=min, na.rm=TRUE) %>% as.data.frame()
-b <- st_sf(data.frame(centroids, df))
+b <- st_as_sf(data.frame(centroids, df))
 names(b)[20] <- "dist"
 
 ##Create income brackets##

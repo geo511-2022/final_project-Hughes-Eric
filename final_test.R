@@ -185,6 +185,7 @@ df <- apply(d, 1, FUN=min, na.rm=TRUE) %>% as.data.frame()
 b <- st_sf(data.frame(centroids, df))
 names(b)[20] <- "dist"
 
+
 ##Create income brackets
 
 # Switch distance variable back to dataframe
