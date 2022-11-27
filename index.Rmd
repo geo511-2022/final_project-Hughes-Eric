@@ -1,6 +1,6 @@
 ---
 title: "Can median household income and access to a vehicle be predictive of supermarket presence in Buffalo, NY?"
-author: Eric Hughes
+author: Eric Hughes 
 ---
 
 # Introduction 
