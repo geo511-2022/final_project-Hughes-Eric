@@ -2,7 +2,7 @@ name: Render RMarkdown Website
 'on': push
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     container: rocker/geospatial:latest
     steps:
       - name: Checkout Repository
