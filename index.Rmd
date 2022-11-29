@@ -15,7 +15,7 @@ This project aims to look at Buffalo resident's proximity to supermarkets based 
 
 - US Census Bureau will provide census tract data of median household income, as well as demographic data, for Buffalo
 
-- Open Data Buffalo for Neighborhood Boundary Shapefile
+- Open Data Buffalo for Neighborhood Boundary Shape file
 
 - ESRI Business Analyst will provide all supermarket data
 
@@ -37,9 +37,9 @@ library(stringi)
 
 
 ## Data cleaning
+###Import the two data sets, filter for needed fields, and rename fields logically
 
 ```{r, message=F, warning=F}
-#Create Variable with all census tracts within Buffalo boundary that contains median household income data
 
 income_csv <- read.csv(file = "median_income_data_2020.csv",
                               skip = 2, header = F)
@@ -50,8 +50,9 @@ income_data$geoid = as.character(income_data$geoid)
 vehicle_access_csv <- read.csv(file = "vehicle_access.csv")
 vehicle_access_data <- vehicle_access_csv[c(1,2,6)]
 colnames(vehicle_access_data) <- c("geoid","census.tract","prop.wo.va")
-
-#Create Buffalo border
+```
+###Create Buffalo border
+```{r, message=F, warning=F}
 
 buffalo_border <- st_read("buffalo_boundary") %>%
   st_transform(4326)
@@ -62,8 +63,11 @@ basemap <- get_stamenmap(
   bbox = buffalo_bbox,
   zoom = 13,
   maptype = "toner-lite")
+```
 
-#Import census tracts and join with median income and vehicle access data
+###Import census tracts and join with median income and vehicle access data. Then convert data types of specific fields for future analysis
+
+```{r, message=F, warning=F}
 
 census_tracts <- st_read("buffalo_census_tracts") 
 
@@ -77,7 +81,11 @@ vehicle_shape$INTPTLAT = as.numeric(vehicle_shape$INTPTLAT)
 vehicle_shape$INTPTLON = as.numeric(vehicle_shape$INTPTLON)
 vehicle_shape$prop.wo.va = as.double(vehicle_shape$prop.wo.va)
 
-#Project data
+```
+
+###Project data and create centroid for each census tract
+
+```{r, message=F, warning=F}
 
 income_proj <- income_shape %>% 
   st_transform(4326) 
@@ -85,22 +93,24 @@ income_proj <- income_shape %>%
 vehicle_proj <- vehicle_shape %>% 
   st_transform(4326) 
 
-#Turn census tracts into centroids
-
 st_cent <- st_centroid(income_proj)
 
-##Create Buffalo supermarkets variable##
+```
 
-#Create a 0.5-mile border around Buffalo
+##Create Buffalo supermarkets variable##
+###Create a 0.5-mile border around Buffalo and select all supermarkets within this newly created buffer zone
+
+```{r, message=F, warning=F}
 border_poly <- buffalo_border %>%
   st_cast("POLYGON")
 buffer_buffalo <- st_buffer(border_poly, dist = 804.672)
 
-#Select all the supermarkets within the new border
 buffalo_supermarkets <- st_read("erie_county_supermarkets")%>%
   st_crop(buffer_buffalo)
+```
 
-#Create X and Y columns in buffalo_supermarkets and centroid data
+###Create X and Y columns in buffalo_supermarkets and centroid data
+```{r, message=F, warning=F}
 coords = st_coordinates(buffalo_supermarkets)
 xlon = coords[,1]
 ylat = coords[,2]
@@ -116,16 +126,19 @@ centroids <- sf_coords %>%
   mutate(xlon,ylat) %>%
   st_transform(4326)
 centroids$id <- 1:max(nrow(centroids))
+```
 
-## Distance from centroid to nearest supermarket
+## Find distance from centroid to nearest supermarket
 # Define Buffalo coordinate variable
+```{r, message=F, warning=F}
 xy_coords <- rbind (
-  c (-78.79514, 42.96641), # Buffalo
-  c (-78.91252, 42.82610)
-) # Buffalo
+  c (-78.79514, 42.96641),
+  c (-78.91252, 42.82610))
 xy <- data.frame (lon = xy_coords [, 1], lat = xy_coords [, 2])
+```
 
-#Calculate distances from centroids to supermarkets
+###Calculate distances from centroids to supermarkets
+```{r, message=F, warning=F}
 
 buffalo_network <- dodgr_streetnet (pts = xy, expand = 0.2, quiet = FALSE)
 graph <- weight_streetnet (buffalo_network, wt_profile = "motorcar")
@@ -138,14 +151,14 @@ d <- dodgr_dists(graph = graph, from = cbind (from_x, from_y), to = cbind (to_x,
 df <- apply(d, 1, FUN=min, na.rm=TRUE) %>% as.data.frame()
 b <- st_as_sf(data.frame(centroids, df))
 names(b)[20] <- "dist"
+```
 
 ##Create income brackets##
 
-# Switch distance variable back to dataframe
+```{r, message=F, warning=F}
 b_df <- as_data_frame(b)
 
-#Create brackets and join distance calculations
-#Median income brackets
+#median income brackets
 less_than_20k <- income_proj %>%
   filter(median.household.income <= 20000) %>%
   left_join(b_df, by = c("GEOID" = "GEOID"))
@@ -178,8 +191,10 @@ less_than_0.6 <- vehicle_proj %>%
 greater_than_0.6 <- vehicle_proj %>%
   filter(prop.wo.va > 0.6) %>%
   left_join(b_df, by = c("GEOID" = "GEOID"))
+```
 
 ##Calculate average distance for each bracket in meters##
+```{r, message=F, warning=F}
 
 ave_dist_less_than_20k <- mean(less_than_20k$dist) #1813.465
 ave_dist_less_than_40k <- mean(less_than_40k$dist) #1926.935
@@ -196,7 +211,7 @@ ave_dist_greater_than_0.6 <- mean(greater_than_0.6$dist) #2438.269
 
 ## Plots for median household income and vehicle access
 
-The plot for median house income shows where supermarkets are in relation to each census tract and each census tract's income bracket. 
+The plot for median household income shows where supermarkets are in relation to each census tract and each census tract's income bracket. 
 
 ```{r, message=F, warning=F}
 
@@ -266,6 +281,8 @@ income_table <- kableExtra::kable(income_table_combine)
 kable_styling(income_table, "striped", position = "left", font_size = 12, html_font = "arial")
 
 ```
+
+##The vehicle access data table reveals a pattern where people with less access to a vehicle have further distances to travel to reach a supermarket.
 ```{r, message=F, warning=F}
 
 vehicle_bracket <- data.frame(matrix(ncol = 1, nrow = 4))
