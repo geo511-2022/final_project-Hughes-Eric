@@ -35,9 +35,7 @@ library(kableExtra)
 library(stringi)
 ```
 
-
-## Data cleaning
-###Import the two data sets, filter for needed fields, and rename fields logically
+## Import the two data sets, filter for needed fields, and rename fields logically
 
 ```{r, message=F, warning=F}
 
@@ -51,7 +49,7 @@ vehicle_access_csv <- read.csv(file = "vehicle_access.csv")
 vehicle_access_data <- vehicle_access_csv[c(1,2,6)]
 colnames(vehicle_access_data) <- c("geoid","census.tract","prop.wo.va")
 ```
-###Create Buffalo border
+## Create Buffalo border
 ```{r, message=F, warning=F}
 
 buffalo_border <- st_read("buffalo_boundary") %>%
@@ -65,7 +63,7 @@ basemap <- get_stamenmap(
   maptype = "toner-lite")
 ```
 
-###Import census tracts and join with median income and vehicle access data. Then convert data types of specific fields for future analysis
+## Import census tracts and join with median income and vehicle access data. Then convert data types of specific fields for future analysis
 
 ```{r, message=F, warning=F}
 
@@ -83,7 +81,7 @@ vehicle_shape$prop.wo.va = as.double(vehicle_shape$prop.wo.va)
 
 ```
 
-###Project data and create centroid for each census tract
+## Project data and create centroid for each census tract
 
 ```{r, message=F, warning=F}
 
@@ -97,8 +95,7 @@ st_cent <- st_centroid(income_proj)
 
 ```
 
-##Create Buffalo supermarkets variable##
-###Create a 0.5-mile border around Buffalo and select all supermarkets within this newly created buffer zone
+## Create a 0.5-mile border around Buffalo and select all supermarkets within this newly created buffer zone
 
 ```{r, message=F, warning=F}
 border_poly <- buffalo_border %>%
@@ -109,7 +106,7 @@ buffalo_supermarkets <- st_read("erie_county_supermarkets")%>%
   st_crop(buffer_buffalo)
 ```
 
-###Create X and Y columns in buffalo_supermarkets and centroid data
+## Create X and Y columns in buffalo_supermarkets and centroid data
 ```{r, message=F, warning=F}
 coords = st_coordinates(buffalo_supermarkets)
 xlon = coords[,1]
@@ -128,8 +125,7 @@ centroids <- sf_coords %>%
 centroids$id <- 1:max(nrow(centroids))
 ```
 
-## Find distance from centroid to nearest supermarket
-# Define Buffalo coordinate variable
+## Define Buffalo coordinate variable
 ```{r, message=F, warning=F}
 xy_coords <- rbind (
   c (-78.79514, 42.96641),
@@ -137,7 +133,7 @@ xy_coords <- rbind (
 xy <- data.frame (lon = xy_coords [, 1], lat = xy_coords [, 2])
 ```
 
-###Calculate distances from centroids to supermarkets
+## Calculate distances from centroids to supermarkets
 ```{r, message=F, warning=F}
 
 buffalo_network <- dodgr_streetnet (pts = xy, expand = 0.2, quiet = FALSE)
@@ -153,7 +149,7 @@ b <- st_as_sf(data.frame(centroids, df))
 names(b)[20] <- "dist"
 ```
 
-##Create income brackets##
+## Create income brackets
 
 ```{r, message=F, warning=F}
 b_df <- as_data_frame(b)
@@ -193,7 +189,7 @@ greater_than_0.6 <- vehicle_proj %>%
   left_join(b_df, by = c("GEOID" = "GEOID"))
 ```
 
-##Calculate average distance for each bracket in meters##
+## Calculate average distance for each bracket in meters
 ```{r, message=F, warning=F}
 
 ave_dist_less_than_20k <- mean(less_than_20k$dist) #1813.465
@@ -282,7 +278,7 @@ kable_styling(income_table, "striped", position = "left", font_size = 12, html_f
 
 ```
 
-##The vehicle access data table reveals a pattern where people with less access to a vehicle have further distances to travel to reach a supermarket.
+## The vehicle access data table reveals a pattern where people with less access to a vehicle have further distances to travel to reach a supermarket.
 ```{r, message=F, warning=F}
 
 vehicle_bracket <- data.frame(matrix(ncol = 1, nrow = 4))
