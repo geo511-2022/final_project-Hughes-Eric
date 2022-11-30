@@ -32,12 +32,10 @@ library(classInt)
 library(knitr)
 library(geodist)
 library(kableExtra)
-library(stringi)
 ```
 
-## Import the two data sets, filter for needed fields, and rename fields logically
-
 ```{r, message=F, warning=F}
+# Import the two data sets, filter for needed fields, and rename fields logically
 
 income_csv <- read.csv(file = "median_income_data_2020.csv",
                               skip = 2, header = F)
@@ -49,8 +47,8 @@ vehicle_access_csv <- read.csv(file = "vehicle_access.csv")
 vehicle_access_data <- vehicle_access_csv[c(1,2,6)]
 colnames(vehicle_access_data) <- c("geoid","census.tract","prop.wo.va")
 ```
-## Create Buffalo border
 ```{r, message=F, warning=F}
+# Create Buffalo border
 
 buffalo_border <- st_read("buffalo_boundary") %>%
   st_transform(4326)
@@ -63,9 +61,8 @@ basemap <- get_stamenmap(
   maptype = "toner-lite")
 ```
 
-## Import census tracts and join with median income and vehicle access data. Then convert data types of specific fields for future analysis
-
 ```{r, message=F, warning=F}
+# Import census tracts and join with median income and vehicle access data. Then convert data types of specific fields for future analysis
 
 census_tracts <- st_read("buffalo_census_tracts") 
 
@@ -81,9 +78,8 @@ vehicle_shape$prop.wo.va = as.double(vehicle_shape$prop.wo.va)
 
 ```
 
-## Project data and create centroid for each census tract
-
 ```{r, message=F, warning=F}
+# Project data and create centroid for each census tract
 
 income_proj <- income_shape %>% 
   st_transform(4326) 
@@ -95,9 +91,9 @@ st_cent <- st_centroid(income_proj)
 
 ```
 
-## Create a 0.5-mile border around Buffalo and select all supermarkets within this newly created buffer zone
 
 ```{r, message=F, warning=F}
+## Create a 0.5-mile border around Buffalo and select all supermarkets within this newly created buffer zone
 border_poly <- buffalo_border %>%
   st_cast("POLYGON")
 buffer_buffalo <- st_buffer(border_poly, dist = 804.672)
@@ -106,8 +102,8 @@ buffalo_supermarkets <- st_read("erie_county_supermarkets")%>%
   st_crop(buffer_buffalo)
 ```
 
-## Create X and Y columns in buffalo_supermarkets and centroid data
 ```{r, message=F, warning=F}
+# Create X and Y columns in buffalo_supermarkets and centroid data
 coords = st_coordinates(buffalo_supermarkets)
 xlon = coords[,1]
 ylat = coords[,2]
@@ -125,16 +121,17 @@ centroids <- sf_coords %>%
 centroids$id <- 1:max(nrow(centroids))
 ```
 
-## Define Buffalo coordinate variable
+
 ```{r, message=F, warning=F}
+# Define Buffalo coordinate variable
 xy_coords <- rbind (
   c (-78.79514, 42.96641),
   c (-78.91252, 42.82610))
 xy <- data.frame (lon = xy_coords [, 1], lat = xy_coords [, 2])
 ```
 
-## Calculate distances from centroids to supermarkets
 ```{r, message=F, warning=F}
+# Calculate distances from centroids to supermarkets
 
 buffalo_network <- dodgr_streetnet (pts = xy, expand = 0.2, quiet = FALSE)
 graph <- weight_streetnet (buffalo_network, wt_profile = "motorcar")
@@ -149,9 +146,10 @@ b <- st_as_sf(data.frame(centroids, df))
 names(b)[20] <- "dist"
 ```
 
-## Create income brackets
+
 
 ```{r, message=F, warning=F}
+# Create income brackets
 b_df <- as_data_frame(b)
 
 #median income brackets
@@ -189,8 +187,8 @@ greater_than_0.6 <- vehicle_proj %>%
   left_join(b_df, by = c("GEOID" = "GEOID"))
 ```
 
-## Calculate average distance for each bracket in meters
 ```{r, message=F, warning=F}
+# Calculate average distance for each bracket in meters
 
 ave_dist_less_than_20k <- mean(less_than_20k$dist) #1813.465
 ave_dist_less_than_40k <- mean(less_than_40k$dist) #1926.935
@@ -278,8 +276,9 @@ kable_styling(income_table, "striped", position = "left", font_size = 12, html_f
 
 ```
 
-## The vehicle access data table reveals a pattern where people with less access to a vehicle have further distances to travel to reach a supermarket.
+
 ```{r, message=F, warning=F}
+#The vehicle access data table reveals a pattern where people with less access to a vehicle have further distances to travel to reach a supermarket.
 
 vehicle_bracket <- data.frame(matrix(ncol = 1, nrow = 4))
 colnames(vehicle_bracket) = "Vehicle access bracket"
