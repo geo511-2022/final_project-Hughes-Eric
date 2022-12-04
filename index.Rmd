@@ -152,7 +152,7 @@ names(b)[20] <- "dist"
 # Create income brackets
 b_df <- as_data_frame(b)
 
-#median income brackets
+#median income brackets 
 less_than_20k <- income_proj %>%
   filter(median.household.income <= 20000) %>%
   left_join(b_df, by = c("GEOID" = "GEOID"))
@@ -261,7 +261,7 @@ income_bracket[2,1] = "Between 20K and 40k"
 income_bracket[3,1] = "Between 40k and 60k"
 income_bracket[4,1] = "More than 60k"
 
-income_dists <- data.frame(matrix(ncol = 1, nrow = 4))
+income_dists <- data.frame(matrix(ncol = 1, nrow = 4)) 
 colnames(income_dists) = "Average distance to nearest supermarket (miles)"
 income_dists[1,1] = round(ave_dist_less_than_20k / 1609.344, digits = 2)
 income_dists[2,1] = round(ave_dist_less_than_40k / 1609.344, digits = 2)
