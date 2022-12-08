@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Eric Hughes" />
+
+
+<title>Examining food access in Buffalo, NY, based on median household income and access to a vehicle</title>
+
+<script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+      .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Spatial Data Science Final Project</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Examining food access in Buffalo, NY, based
+on median household income and access to a vehicle</h1>
+<h4 class="author">Eric Hughes</h4>
+
+</div>
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Access to healthy food is not equal across all regions. Many factors
+influence food access such as income (Walker et al., 2010), vehicle
+access (Crowe et al., 2018), and proximity to quality grocery retailers
+(Moore &amp; Diez Roux, 2006). The most basic measure of food access is
+proximity to supermarkets because supermarkets have the resources to
+carry a wide range of products and have affordable prices (Moore &amp;
+Diez Roux, 2006; Sallis et al., 1986), making their presence a good
+measure of local food security. Using Moore &amp; Diez’s (2006)
+definition of a supermarket, only grocery stores with 50 or more
+employees are considered supermarkets.</p>
+<p>This project aims to look at Buffalo residents’ proximity to
+supermarkets based on their median household income and access to a
+vehicle. To do this, two analyses will be run. For the first, Buffalo
+residents will be grouped into four different income brackets based on
+their median household income per census tract. Then, the distance to
+the nearest supermarket for each census tract will be calculated. All
+census tracts within the same bracket will be averaged. For the second
+analysis, Buffalo residents will be grouped into four brackets based on
+the proportions of households within each census tract without access to
+a personal vehicle. Then, the distance to the nearest supermarket for
+each census tract will be calculated. All census tracts within the same
+bracket will be averaged. To calculate distances for each census tract,
+each census tract polygon will first be converted to a centroid. Results
+will be compared and discussed in the Results and Conclusions
+sections.</p>
+</div>
+<div id="materials-and-methods" class="section level1">
+<h1>Materials and methods</h1>
+<div id="data-sources" class="section level2">
+<h2>Data sources</h2>
+<ul>
+<li><p>US Census Bureau will provide census tract data of median
+household income and vehicle access</p></li>
+<li><p>Data.buffalony.gov was used for the neighborhood boundary
+shapefile</p></li>
+<li><p>ESRI Business Analyst provided all supermarket data</p></li>
+</ul>
+</div>
+<div id="packages" class="section level2">
+<h2>Packages</h2>
+<pre class="r"><code>library(sf)
+library(tidyverse)
+library(ggplot2)
+library(sp)
+library(ggmap)
+library(dodgr)
+library(osmdata)
+library(classInt)
+library(knitr)
+library(geodist)
+library(kableExtra)</code></pre>
+<pre class="r"><code># Import the two data sets, filter for needed fields, and rename fields logically
+
+income_csv &lt;- read.csv(file = &quot;median_income_data_2020.csv&quot;,
+                              skip = 2, header = F)
+income_data &lt;- income_csv[c(1,2,323)]
+colnames(income_data) &lt;- c(&quot;geoid&quot;, &quot;census.tract&quot;, &quot;median.household.income&quot;)
+income_data$geoid = as.character(income_data$geoid)
+
+vehicle_access_csv &lt;- read.csv(file = &quot;vehicle_access.csv&quot;)
+vehicle_access_data &lt;- vehicle_access_csv[c(1,2,6)]
+colnames(vehicle_access_data) &lt;- c(&quot;geoid&quot;,&quot;census.tract&quot;,&quot;prop.wo.va&quot;)</code></pre>
+<pre class="r"><code># Create Buffalo border
+
+buffalo_border &lt;- st_read(&quot;buffalo_boundary&quot;) %&gt;%
+  st_transform(4326)</code></pre>
+<pre><code>## Reading layer `BuffaloLine&#39; from data source 
+##   `/__w/final_project-Hughes-Eric/final_project-Hughes-Eric/buffalo_boundary&#39; 
+##   using driver `ESRI Shapefile&#39;
+## Simple feature collection with 1 feature and 3 fields
+## Geometry type: MULTILINESTRING
+## Dimension:     XY
+## Bounding box:  xmin: -78.91252 ymin: 42.8261 xmax: -78.79514 ymax: 42.96641
+## Geodetic CRS:  WGS 84</code></pre>
+<pre class="r"><code>buffalo_sp &lt;- as_Spatial(st_transform(buffalo_border, 4326))
+buffalo_bbox &lt;- buffalo_sp@bbox
+
+basemap &lt;- get_stamenmap(
+  bbox = buffalo_bbox,
+  zoom = 13,
+  maptype = &quot;toner-lite&quot;)</code></pre>
+<pre class="r"><code># Import census tracts and join with median income and vehicle access data. Then convert data types of specific fields for future analysis
+
+census_tracts &lt;- st_read(&quot;buffalo_census_tracts&quot;) </code></pre>
+<pre><code>## Reading layer `buffalo_census_tracts&#39; from data source 
+##   `/__w/final_project-Hughes-Eric/final_project-Hughes-Eric/buffalo_census_tracts&#39; 
+##   using driver `ESRI Shapefile&#39;
+## Simple feature collection with 91 features and 14 fields
+## Geometry type: MULTIPOLYGON
+## Dimension:     XY
+## Bounding box:  xmin: -78.91245 ymin: 42.82611 xmax: -78.79528 ymax: 42.9664
+## Geodetic CRS:  WGS 84</code></pre>
+<pre class="r"><code>income_shape &lt;- census_tracts %&gt;% left_join(income_data, by = c(&quot;GEOID&quot; = &quot;geoid&quot;))
+income_shape$INTPTLAT = as.numeric(income_shape$INTPTLAT)
+income_shape$INTPTLON = as.numeric(income_shape$INTPTLON)
+income_shape$median.household.income = as.integer(income_shape$median.household.income)
+
+vehicle_shape &lt;- census_tracts %&gt;% left_join(vehicle_access_data, by = c(&quot;GEOID&quot; = &quot;geoid&quot;))
+vehicle_shape$INTPTLAT = as.numeric(vehicle_shape$INTPTLAT)
+vehicle_shape$INTPTLON = as.numeric(vehicle_shape$INTPTLON)
+vehicle_shape$prop.wo.va = as.double(vehicle_shape$prop.wo.va)</code></pre>
+<pre class="r"><code># Project data and create centroid for each census tract
+
+income_proj &lt;- income_shape %&gt;% 
+  st_transform(4326) 
+
+vehicle_proj &lt;- vehicle_shape %&gt;% 
+  st_transform(4326) 
+
+st_cent &lt;- st_centroid(income_proj)</code></pre>
+<pre class="r"><code>## Create a 0.5-mile border around Buffalo and select all supermarkets within this newly created buffer zone. 0.5-miles is the threshold used by the USDA regarding distance to a supermarket to determine if an area is considered to have low food access. 
+border_poly &lt;- buffalo_border %&gt;%
+  st_cast(&quot;POLYGON&quot;)
+buffer_buffalo &lt;- st_buffer(border_poly, dist = 804.672)
+
+buffalo_supermarkets &lt;- st_read(&quot;erie_county_supermarkets&quot;)%&gt;%
+  st_crop(buffer_buffalo)</code></pre>
+<pre><code>## Reading layer `erie_county_supermarkets&#39; from data source 
+##   `/__w/final_project-Hughes-Eric/final_project-Hughes-Eric/erie_county_supermarkets&#39; 
+##   using driver `ESRI Shapefile&#39;
+## Simple feature collection with 79 features and 21 fields
+## Geometry type: POINT
+## Dimension:     XY
+## Bounding box:  xmin: -79.04732 ymin: 42.46463 xmax: -78.49928 ymax: 43.03835
+## Geodetic CRS:  WGS 84</code></pre>
+<pre class="r"><code># Create X and Y columns in buffalo_supermarkets and centroid data for coordinate points
+coords = st_coordinates(buffalo_supermarkets)
+xlon = coords[,1]
+ylat = coords[,2]
+bf_supermarkets &lt;- buffalo_supermarkets %&gt;%
+  mutate(xlon,ylat) 
+
+sf_coords &lt;- st_as_sf(st_cent) 
+cen_coords &lt;- st_coordinates(sf_coords)
+xlon = cen_coords[,1]
+ylat = cen_coords[,2]
+
+centroids &lt;- sf_coords %&gt;%
+  mutate(xlon,ylat) %&gt;%
+  st_transform(4326)
+centroids$id &lt;- 1:max(nrow(centroids))</code></pre>
+<pre class="r"><code># Define Buffalo coordinate variable
+xy_coords &lt;- rbind (
+  c (-78.79514, 42.96641),
+  c (-78.91252, 42.82610))
+xy &lt;- data.frame (lon = xy_coords [, 1], lat = xy_coords [, 2])</code></pre>
+<pre class="r"><code># Calculate distances from centroids to supermarkets
+
+buffalo_network &lt;- dodgr_streetnet (pts = xy, expand = 0.2, quiet = FALSE)
+graph &lt;- weight_streetnet (buffalo_network, wt_profile = &quot;motorcar&quot;)
+graph &lt;- graph [which (graph$component == 1), ]
+from_x &lt;- centroids$INTPTLON
+from_y &lt;- centroids$INTPTLAT
+to_x &lt;- bf_supermarkets$xlon
+to_y &lt;- bf_supermarkets$ylat
+d &lt;- dodgr_dists(graph = graph, from = cbind (from_x, from_y), to = cbind (to_x, to_y))
+df &lt;- apply(d, 1, FUN=min, na.rm=TRUE) %&gt;% as.data.frame()
+b &lt;- st_as_sf(data.frame(centroids, df))
+names(b)[20] &lt;- &quot;dist&quot;</code></pre>
+<pre class="r"><code># Create brackets
+b_df &lt;- as_data_frame(b)
+
+# median income brackets
+less_than_20k &lt;- income_proj %&gt;%
+  filter(median.household.income &lt;= 20000) %&gt;%
+  left_join(b_df, by = c(&quot;GEOID&quot; = &quot;GEOID&quot;))
+
+less_than_40k &lt;- income_proj %&gt;%
+  filter(median.household.income &gt; 20000, median.household.income &lt;= 40000) %&gt;%
+  left_join(b_df, by = c(&quot;GEOID&quot; = &quot;GEOID&quot;))
+
+less_than_60k &lt;- income_proj %&gt;%
+  filter(median.household.income &gt; 40000, median.household.income &lt;= 60000) %&gt;%
+  left_join(b_df, by = c(&quot;GEOID&quot; = &quot;GEOID&quot;))
+
+greater_than_or_equal_60k &lt;- income_proj %&gt;%
+  filter(median.household.income &gt;= 60000) %&gt;%
+  left_join(b_df, by = c(&quot;GEOID&quot; = &quot;GEOID&quot;))
+
+# Vehicle access brackets
+less_than_0.2 &lt;- vehicle_proj %&gt;%
+  filter(prop.wo.va &lt;= 0.2) %&gt;%
+  left_join(b_df, by = c(&quot;GEOID&quot; = &quot;GEOID&quot;))
+
+less_than_0.4 &lt;- vehicle_proj %&gt;%
+  filter(prop.wo.va &gt; 0.2, prop.wo.va &lt;= 0.4) %&gt;%
+  left_join(b_df, by = c(&quot;GEOID&quot; = &quot;GEOID&quot;))
+
+less_than_0.6 &lt;- vehicle_proj %&gt;%
+  filter(prop.wo.va &gt; 0.4, prop.wo.va &lt;= 0.6) %&gt;%
+  left_join(b_df, by = c(&quot;GEOID&quot; = &quot;GEOID&quot;))
+
+greater_than_0.6 &lt;- vehicle_proj %&gt;%
+  filter(prop.wo.va &gt; 0.6) %&gt;%
+  left_join(b_df, by = c(&quot;GEOID&quot; = &quot;GEOID&quot;))</code></pre>
+<pre class="r"><code># Calculate average distance for each bracket in meters
+
+ave_dist_less_than_20k &lt;- mean(less_than_20k$dist) #1813.465
+ave_dist_less_than_40k &lt;- mean(less_than_40k$dist) #1926.935
+ave_dist_less_than_60k &lt;- mean(less_than_60k$dist) #1830.889
+ave_dist_greater_than_60k &lt;- mean(greater_than_or_equal_60k$dist) #1648.723
+
+ave_dist_less_than_0.2 &lt;- mean(less_than_0.2$dist) #1661.945
+ave_dist_less_than_0.4 &lt;- mean(less_than_0.4$dist) #1844.538
+ave_dist_less_than_0.6 &lt;- mean(less_than_0.6$dist) #1957.577
+ave_dist_greater_than_0.6 &lt;- mean(greater_than_0.6$dist) #2438.269</code></pre>
+</div>
+</div>
+<div id="results" class="section level1">
+<h1>Results</h1>
+<div id="plots-for-median-household-income-and-vehicle-access"
+class="section level2">
+<h2>Plots for median household income and vehicle access</h2>
+<p>The plot for median household income shows where supermarkets are in
+relation to each census tract and each census tract’s income
+bracket.</p>
+<pre class="r"><code>income_supermarket &lt;- ggmap(basemap) +
+  geom_sf(data = income_proj, aes(x = INTPTLON, y = INTPTLAT,  fill = median.household.income), 
+          inherit.aes = F)+
+  scale_fill_gradient(low = &quot;yellow&quot;, high = &quot;red&quot;) +
+  geom_point(data = bf_supermarkets, aes(x = xlon, y = ylat, color = &quot;Supermarket&quot;), size = 3) +
+  scale_color_manual(values = &quot;green&quot;, name = &quot;Supermarkets&quot;) +
+  labs(title=&quot;All supermarkets within 0.5-miles of Buffalo, NY (2020)&quot;,
+       subtitle=&quot;Median income data&quot;,
+       caption=&quot;Median household income data from US Census Bureau,
+       supermarket data from Data Axle&quot;,
+       x = &quot;Longitude&quot;,
+       y = &quot;Latitude&quot;) +
+  theme(legend.direction = &quot;vertical&quot;, axis.text.x = element_text(angle = 45, vjust = 0.9, hjust=1))+
+  guides(fill=guide_legend(title=&quot;Median Household Income ($)&quot;, order = 1)) 
+income_supermarket  </code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>The plot for vehicle access data shows where supermarkets are in
+relation to each census tract and each census tract’s vehicle access
+bracket.</p>
+<pre class="r"><code>vehicle_supermarket &lt;- ggmap(basemap) +
+  geom_sf(data = vehicle_proj, aes(x = INTPTLON, y = INTPTLAT,  fill = prop.wo.va), 
+          inherit.aes = F)+
+  scale_fill_gradient(low = &quot;#f1eef6&quot;, high = &quot;#ce1256&quot;) +
+  geom_point(data = bf_supermarkets, aes(x = xlon, y = ylat, color = &quot;Supermarket&quot;), size = 3) +
+  scale_color_manual(values = &quot;green&quot;, name = &quot;Supermarkets&quot;) +
+  labs(title=&quot;All supermarkets within 0.5-miles of Buffalo, NY (2020)&quot;,
+       subtitle=&quot;Proportion of households without vehicle access&quot;,
+       caption=&quot;Vehicle access data from US Census Bureau,
+       supermarket data from Data Axle&quot;,
+       x = &quot;Longitude&quot;,
+       y = &quot;Latitude&quot;) +
+  theme(legend.direction = &quot;vertical&quot;, axis.text.x = element_text(angle = 45, vjust = 0.9, hjust=1))+
+  guides(fill=guide_legend(title=&quot;Proportion of households 
+without access to a vehicle&quot;)) 
+vehicle_supermarket</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
+<div id="summary-tables" class="section level2">
+<h2>Summary tables</h2>
+<p>The median household income data table shows that there was not an
+obvious pattern of supermarket distribution based on median household
+income. The highest median income bracket did on average have the
+shortest distance to a supermarket, but the other three brackets had
+similar distances with the bracket “Between 20K and 40K” with the
+furthest distance.</p>
+<pre class="r"><code>income_bracket &lt;- data.frame(matrix(ncol = 1, nrow = 4))
+colnames(income_bracket) = &quot;Income bracket ($)&quot;
+income_bracket[1,1] = &quot;20k or less&quot;
+income_bracket[2,1] = &quot;Between 20K and 40k&quot;
+income_bracket[3,1] = &quot;Between 40k and 60k&quot;
+income_bracket[4,1] = &quot;More than 60k&quot;
+
+income_dists &lt;- data.frame(matrix(ncol = 1, nrow = 4))
+colnames(income_dists) = &quot;Average distance to nearest supermarket (miles)&quot;
+income_dists[1,1] = round(ave_dist_less_than_20k / 1609.344, digits = 2)
+income_dists[2,1] = round(ave_dist_less_than_40k / 1609.344, digits = 2)
+income_dists[3,1] = round(ave_dist_less_than_60k / 1609.344, digits = 2)
+income_dists[4,1] = round(ave_dist_greater_than_60k / 1609.344, digits = 2)
+
+income_table_combine &lt;- cbind(income_bracket,income_dists)
+
+income_table &lt;- kableExtra::kable(income_table_combine) 
+
+kable_styling(income_table, &quot;striped&quot;, position = &quot;left&quot;, font_size = 12, html_font = &quot;arial&quot;)</code></pre>
+<table class="table table-striped" style="font-size: 12px; font-family: arial; ">
+<thead>
+<tr>
+<th style="text-align:left;">
+Income bracket ($)
+</th>
+<th style="text-align:right;">
+Average distance to nearest supermarket (miles)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+20k or less
+</td>
+<td style="text-align:right;">
+1.13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Between 20K and 40k
+</td>
+<td style="text-align:right;">
+1.20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Between 40k and 60k
+</td>
+<td style="text-align:right;">
+1.14
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+More than 60k
+</td>
+<td style="text-align:right;">
+1.02
+</td>
+</tr>
+</tbody>
+</table>
+<p>The vehicle access data table reveals a pattern where people with
+less access to a vehicle have further distances to travel to reach a
+supermarket.</p>
+<pre class="r"><code>vehicle_bracket &lt;- data.frame(matrix(ncol = 1, nrow = 4))
+colnames(vehicle_bracket) = &quot;Vehicle access bracket&quot;
+vehicle_bracket[1,1] = &quot;Less than 20% of households don&#39;t have access to a vehicle&quot;
+vehicle_bracket[2,1] = &quot;Between 20% and 40% of households don&#39;t have access to a vehicle&quot;
+vehicle_bracket[3,1] = &quot;Between 40% and 60% of households don&#39;t have access to a vehicle&quot;
+vehicle_bracket[4,1] = &quot;More than 60% of households don&#39;t have access to a vehicle&quot;
+
+vehicle_dists &lt;- data.frame(matrix(ncol = 1, nrow = 4))
+colnames(vehicle_dists) = &quot;Average distance to nearest supermarket (miles)&quot;
+vehicle_dists[1,1] = round(ave_dist_less_than_0.2 / 1609.344, digits = 2)
+vehicle_dists[2,1] = round(ave_dist_less_than_0.4 / 1609.344, digits = 2)
+vehicle_dists[3,1] = round(ave_dist_less_than_0.6 / 1609.344, digits = 2)
+vehicle_dists[4,1] = round(ave_dist_greater_than_0.6 / 1609.344, digits = 2)
+
+vehicle_table_combine &lt;- cbind(vehicle_bracket,vehicle_dists)
+
+vehicle_table &lt;- kableExtra::kable(vehicle_table_combine)
+
+kable_styling(vehicle_table, &quot;striped&quot;, position = &quot;left&quot;, font_size = 12, html_font = &quot;arial&quot;)</code></pre>
+<table class="table table-striped" style="font-size: 12px; font-family: arial; ">
+<thead>
+<tr>
+<th style="text-align:left;">
+Vehicle access bracket
+</th>
+<th style="text-align:right;">
+Average distance to nearest supermarket (miles)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Less than 20% of households don’t have access to a vehicle
+</td>
+<td style="text-align:right;">
+1.03
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Between 20% and 40% of households don’t have access to a vehicle
+</td>
+<td style="text-align:right;">
+1.15
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Between 40% and 60% of households don’t have access to a vehicle
+</td>
+<td style="text-align:right;">
+1.22
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+More than 60% of households don’t have access to a vehicle
+</td>
+<td style="text-align:right;">
+1.52
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="conclusions" class="section level1">
+<h1>Conclusions</h1>
+<p>The results for the median household income data were a bit
+surprising. Given that supermarkets tend to favor more affluent
+neighborhoods, expectations were that as each income bracket increased
+in wealth, the distance would decrease. While the highest earners had to
+travel the least distance, the other three brackets did not show a
+linear progression of decreasing distances as income increased. However,
+the vehicle access data yielded the expected results. As the proportion
+of households’ access to vehicles decreased, the average distance to
+supermarkets increased. This is expected because people without access
+to a vehicle typically come from vulnerable communities where
+supermarkets are less inclined to enter.</p>
+<p>Further research could be done by examining demographic variables
+such as race and education. By looking into these variables, further
+insights could be gained to further explain food access and the
+distribution of supermarkets in Buffalo, NY.</p>
+</div>
+<div id="references" class="section level1">
+<h1>References</h1>
+<ul>
+<li><p>Crowe, J., Lacy, C., &amp; Columbus, Y. (2018). Barriers to food
+security and community stress in an urban food desert. Urban Science,
+2(2), 46.</p></li>
+<li><p>Moore, L. V., &amp; Diez Roux, A. V. (2006). Associations of
+neighborhood characteristics with the location and type of food stores.
+American journal of public health, 96(2), 325-331.</p></li>
+<li><p>Sallis, J. F., Nader, P. R., Rupp, J. W., Atkins, C. J., &amp;
+Wilson, W. C. (1986). San Diego surveyed for heart-healthy foods and
+exercise facilities. Public health reports (Washington, DC: 1974),
+101(2), 216-219.</p></li>
+<li><p>Walker, R. E., Keane, C. R., &amp; Burke, J. G. (2010).
+Disparities and access to healthy food in the United States: A review of
+food deserts literature. Health &amp; place, 16(5), 876-884.</p></li>
+</ul>
+</div>
+
+<!-- give the footer some space -->
+<br/>
+<br/>
+
+<footer id="site-footer">
+  <div id="footer1">
+  This website is a project for Adam Wilson's <a href="https://wilsonlab.io/GEO511"><i> Spatial Data Science (GEO511) </i></a>Course at the University at Buffalo
+  </div>
+  <div id="footer2">
+  <a rel="license" property="http://creativecommons.org/ns#license"
+  href="http://creativecommons.org/licenses/by/4.0/" ><img src="img/cc-by.svg" alt="cc-by"/></a> 
+  </div>
+</footer>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+
+</body>
+</html>
