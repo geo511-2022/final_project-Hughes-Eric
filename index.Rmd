@@ -1,23 +1,24 @@
 ---
-title: "Can median household income and access to a vehicle be predictive of supermarket presence in Buffalo, NY?"
+title: "Examining food access in Buffalo, NY, based on median household income and access to a vehicle"
 author: Eric Hughes
 ---
 
 # Introduction 
 
-Access to healthy food is not equal across all regions. Many factors influence food access such as income (Walker et al., 2010), vehicle access (Crowe et al., 2018), and proximity to quality grocery retailers (Moore & Diez Roux, 2006). The most basic measure of food access is proximity to supermarkets because supermarkets have the resources to carry a wide range of produce and have affordable prices (Moore & Diez Roux, 2006; Sallis et al., 1986), making their presence a good measure of local food security. Using the Moore & Diez (2006) definition of a supermarket, only grocery stores with 50 or more employees are considered a supermarket.
+Access to healthy food is not equal across all regions. Many factors influence food access such as income (Walker et al., 2010), vehicle access (Crowe et al., 2018), and proximity to quality grocery retailers (Moore & Diez Roux, 2006). The most basic measure of food access is proximity to supermarkets because supermarkets have the resources to carry a wide range of products and have affordable prices (Moore & Diez Roux, 2006; Sallis et al., 1986), making their presence a good measure of local food security. Using Moore & Diez’s (2006) definition of a supermarket, only grocery stores with 50 or more employees are considered supermarkets.
 
-This project aims to look at Buffalo resident's proximity to supermarkets based off their median household income and access to a vehicle. To do this, two analysis will be run. For the first, Buffalo residents will be grouped into four different income brackets based on their median household income per census tract. For the second, Buffalo residents will be grouped into four brackets based on proportions of households within each census tract without access to a personal vehicle. Then, the distance to the nearest supermarket for each census tract centroid will be calculated. Each census tract will be joined to the median household income and vehicle access data sets and averages will be calculated for each bracket. Results will be analyzed and discussed in the Results and Conclusions sections. 
+This project aims to look at Buffalo residents’ proximity to supermarkets based on their median household income and access to a vehicle. To do this, two analyses will be run. For the first, Buffalo residents will be grouped into four different income brackets based on their median household income per census tract. Then, the distance to the nearest supermarket for each census tract will be calculated. All census tracts within the same bracket will be averaged. For the second analysis, Buffalo residents will be grouped into four brackets based on the proportions of households within each census tract without access to a personal vehicle. Then, the distance to the nearest supermarket for each census tract will be calculated. All census tracts within the same bracket will be averaged. To calculate distances for each census tract, each census tract polygon will first be converted to a centroid. Results will be compared and discussed in the Results and Conclusions sections.
+
 
 # Materials and methods
 
 ## Data sources
 
-- US Census Bureau will provide census tract data of median household income, as well as demographic data, for Buffalo
+- US Census Bureau will provide census tract data of median household income and vehicle access
 
-- Open Data Buffalo for Neighborhood Boundary Shape file
+- Data.buffalony.gov was used for the neighborhood boundary shapefile
 
-- ESRI Business Analyst will provide all supermarket data
+- ESRI Business Analyst provided all supermarket data
 
 ## Packages
 ```{r, message=F, warning=F}
@@ -93,7 +94,7 @@ st_cent <- st_centroid(income_proj)
 
 
 ```{r, message=F, warning=F}
-## Create a 0.5-mile border around Buffalo and select all supermarkets within this newly created buffer zone
+## Create a 0.5-mile border around Buffalo and select all supermarkets within this newly created buffer zone. 0.5-miles is the threshold used by the USDA regarding distance to a supermarket to determine if an area is considered to have low food access. 
 border_poly <- buffalo_border %>%
   st_cast("POLYGON")
 buffer_buffalo <- st_buffer(border_poly, dist = 804.672)
@@ -103,7 +104,7 @@ buffalo_supermarkets <- st_read("erie_county_supermarkets")%>%
 ```
 
 ```{r, message=F, warning=F}
-# Create X and Y columns in buffalo_supermarkets and centroid data
+# Create X and Y columns in buffalo_supermarkets and centroid data for coordinate points
 coords = st_coordinates(buffalo_supermarkets)
 xlon = coords[,1]
 ylat = coords[,2]
@@ -149,10 +150,10 @@ names(b)[20] <- "dist"
 
 
 ```{r, message=F, warning=F}
-# Create income brackets
+# Create brackets
 b_df <- as_data_frame(b)
 
-#median income brackets
+# median income brackets
 less_than_20k <- income_proj %>%
   filter(median.household.income <= 20000) %>%
   left_join(b_df, by = c("GEOID" = "GEOID"))
@@ -169,7 +170,7 @@ greater_than_or_equal_60k <- income_proj %>%
   filter(median.household.income >= 60000) %>%
   left_join(b_df, by = c("GEOID" = "GEOID"))
 
-#Vehicle access brackets
+# Vehicle access brackets
 less_than_0.2 <- vehicle_proj %>%
   filter(prop.wo.va <= 0.2) %>%
   left_join(b_df, by = c("GEOID" = "GEOID"))
@@ -228,6 +229,7 @@ income_supermarket
 ```
 
 The plot for vehicle access data shows where supermarkets are in relation to each census tract and each census tract's vehicle access bracket. 
+
 ```{r, message=F, warning=F}
 
 vehicle_supermarket <- ggmap(basemap) +
@@ -251,7 +253,7 @@ vehicle_supermarket
 
 ## Summary tables
 
-The median household income data table shows that there was not an obvious pattern of supermarket distribution based upon median household income. The highest median income bracket did on average have the shortest distance to a supermarket but the other three brackets had similar distances with the bracket for "Between 20K and 40K" with the furthest distance.
+The median household income data table shows that there was not an obvious pattern of supermarket distribution based on median household income. The highest median income bracket did on average have the shortest distance to a supermarket, but the other three brackets had similar distances with the bracket "Between 20K and 40K" with the furthest distance.
 ```{r, message=F, warning=F}
 
 income_bracket <- data.frame(matrix(ncol = 1, nrow = 4))
@@ -276,9 +278,8 @@ kable_styling(income_table, "striped", position = "left", font_size = 12, html_f
 
 ```
 
-
+The vehicle access data table reveals a pattern where people with less access to a vehicle have further distances to travel to reach a supermarket.
 ```{r, message=F, warning=F}
-#The vehicle access data table reveals a pattern where people with less access to a vehicle have further distances to travel to reach a supermarket.
 
 vehicle_bracket <- data.frame(matrix(ncol = 1, nrow = 4))
 colnames(vehicle_bracket) = "Vehicle access bracket"
@@ -304,9 +305,10 @@ kable_styling(vehicle_table, "striped", position = "left", font_size = 12, html_
 
 # Conclusions
 
-Results for the median household income data was a bit surprising. Given that supermarkets tend to favor more affluent neighborhoods, expectations were that as each income bracket increased, the distance would decrease. While the highest earners had to travel the least distance, the other three brackets did not show a linear progression of decreasing distances as income increased. However, the vehicle access data yielded expected results. As the proportion of households access to vehicles decreased, the average distance to supermarkets increased. This is expected because people without access to a vehicle typically come from vulnerable communities which supermarkets are less inclined to enter. 
+The results for the median household income data were a bit surprising. Given that supermarkets tend to favor more affluent neighborhoods, expectations were that as each income bracket increased in wealth, the distance would decrease. While the highest earners had to travel the least distance, the other three brackets did not show a linear progression of decreasing distances as income increased. However, the vehicle access data yielded the expected results. As the proportion of households’ access to vehicles decreased, the average distance to supermarkets increased. This is expected because people without access to a vehicle typically come from vulnerable communities where supermarkets are less inclined to enter. 
 
-Further research could be done by examining demographic variables such as race and education. By looking into these variables further insights could be gained to further explain the distribution of supermarkets in Buffalo, NY.
+Further research could be done by examining demographic variables such as race and education. By looking into these variables, further insights could be gained to further explain food access and the distribution of supermarkets in Buffalo, NY.
+
 
 # References
 
